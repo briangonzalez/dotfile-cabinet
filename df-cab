@@ -1,0 +1,176 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+#############################################################################################################
+# Options Parsing.
+#############################################################################################################
+
+BANNER = <<-eos
+
+    dotfile-cabinet - responsibly manage your dotfiles with Dropbox
+    =============================================================================
+eos
+
+BANNER_COMMANDS = <<-eos
+    Commands                         Description
+    -----------------------------------------------------------------------------
+    link                             Symlink dotfiles and create backups
+    revert                           Put dotfile backups back in their place
+    list                             List dotfiles currently being tracked
+    init                             Create the required directories
+    purge                            Delete old backups 
+    about                            More information
+    
+eos
+
+# Print banner 
+puts BANNER + BANNER_COMMANDS if ARGV[0].nil?
+
+#############################################################################################################
+# Helper Class.
+#############################################################################################################
+
+CURRENT_DIR           = File.expand_path('..', __FILE__)
+DOTFILE_DIR           = File.join( CURRENT_DIR, 'dotfiles/' )
+DOTFILE_BACKUP_DIR    = File.join( CURRENT_DIR, 'dotfiles-backup/' )
+HOME_DIR              = ARGV[1] ? File.expand_path( ARGV[1] ) : File.expand_path( '~' )
+
+class  DotfileCabinet
+
+  def link
+    puts "❋ Symlinking dotfiles to #{File.expand_path('~')} :"
+    
+    # Create backup dir.
+    FileUtils.mkdir DOTFILE_BACKUP_DIR
+    
+    dotfiles.each do |f| 
+
+      next if ['.DS_Store'].include?(File.basename(f))
+
+      # Ask for user input.
+      ask     = lambda do
+        puts
+        puts "→Symlink '#{File.basename(f)}'' to '#{HOME_DIR}/#{File.basename(f)}' and create backup if needed?"
+        puts "[#{commands.join(', ')}]"
+        b = STDIN.gets.chomp
+        b
+      end
+
+      # Loop until we get an answer we understand.
+      answer  = false
+      while !answer
+        begin
+          answer = perform_link_action(ask.call, f)
+        rescue SystemExit, Interrupt
+          exit
+        rescue Exception => e
+          puts "[ ERROR ] " + e.message
+          answer = true
+        end
+      end    
+    end
+
+    zip_up_backups
+
+  end
+
+  def revert
+  end
+
+  def init
+    puts "❋ Creating '#{DOTFILE_DIR}', if necessary..."
+    FileUtils.mkdir DOTFILE_DIR           unless File.exists? DOTFILE_DIR
+  end
+
+  def list
+    puts "❋ Tracking the following (#{dotfiles.length}) dotfiles:\n"
+    puts dotfiles.each_with_index.map{ |f, index| "(#{index+1})  " + File.basename(f) }
+  end
+  alias_method :ls, :list
+
+  def purge
+    puts "❋ Deleting dotfile backups:\n"
+    `rm -i dotfile-backup*.zip`
+  end
+
+  def integrity_check
+    return true if ['init', 'about'].include? ARGV[0]
+
+    if !(File.exists? DOTFILE_DIR)
+      puts "Bad integrity. #{DOTFILE_DIR} missing? Exiting!"
+      exit
+    end
+  end
+
+  def zip_up_backups
+    `zip dotfile-backup-#{Time.now.to_i.to_s}.zip '#{DOTFILE_BACKUP_DIR}'`
+    FileUtils.rm_rf DOTFILE_BACKUP_DIR
+  end
+
+  def about
+    puts BANNER
+    puts "    More info on the web at: github.com/briangonzalez/dotfile-cabinet"
+  end
+
+  protected
+
+  def dotfiles
+    @dotfiles ||= Dir[ "#{DOTFILE_DIR}/.*" ].reject do |f|
+      ['.', '..'].include? File.basename(f)
+    end
+
+    @dotfiles
+  end
+
+  def commands
+    ['y', 'n', 'a']
+  end
+
+  def perform_link_action(action, file)
+    success = true
+
+    case action
+    when 'y'
+      orig_dotfile = File.join(HOME_DIR, File.basename(file))
+
+      FileUtils.mv( orig_dotfile, DOTFILE_BACKUP_DIR ) if File.exists?(orig_dotfile)
+      FileUtils.symlink( file, HOME_DIR )
+      
+      puts "\n✓ Symlinked #{File.basename(file)} to #{HOME_DIR}."
+    when 'n'
+      # Do nothing.
+    when 'a'
+      puts "Aborting."
+      exit
+    when ''
+      puts "Please provide a command."
+      return false
+    else
+      puts "Unknown command."
+      return false
+    end 
+
+    success
+  end
+
+end
+
+#############################################################################################################
+# Run the commands.
+#############################################################################################################
+
+if ARGV[0]
+  begin
+    puts
+    cb = DotfileCabinet.new
+    cb.integrity_check
+    cb.send( ARGV[0] )
+    puts "\n------------------------------------"
+    puts "✓ Completed task: #{ARGV[0]}"
+  rescue Exception => e
+    cb.zip_up_backups
+    puts "\n------------------------------------"
+    puts "⚠ Error: #{e.message}"
+  end
+end
