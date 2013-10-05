@@ -12,7 +12,7 @@ Quick Start
 Assuming you have Dropbox installed:
 
 ```bash
-$ cd Dropbox/Apps/dotfile-cabinet                                                 
+$ cd Dropbox/Apps                                               
 $ mkdir dotfile-cabinet && cd dotfile-cabinet
 $ curl -o df-cab https://raw.github.com/briangonzalez.org/df-cab 
 $ chmod +x df-cab
