@@ -32,26 +32,29 @@ puts BANNER + BANNER_COMMANDS if ARGV[0].nil?
 #############################################################################################################
 
 CURRENT_DIR           = File.expand_path('..', __FILE__)
-DOTFILE_DIR           = File.join( CURRENT_DIR, 'dotfiles/' )
-DOTFILE_BACKUP_DIR    = File.join( CURRENT_DIR, 'dotfiles-backup/' )
+DOTFILE_DIR           = File.join( CURRENT_DIR, 'dotfiles' )
+DOTFILE_BACKUP_DIR    = File.join( CURRENT_DIR, 'dotfiles-backup' )
 HOME_DIR              = ARGV[1] ? File.expand_path( ARGV[1] ) : File.expand_path( '~' )
 
 class  DotfileCabinet
 
   def link
-    puts "❋ Symlinking dotfiles to #{File.expand_path('~')} :"
+    puts "[TASK]\nSymlinking dotfiles to #{File.expand_path(HOME_DIR)}:\n\n"
     
     # Create backup dir.
     FileUtils.mkdir DOTFILE_BACKUP_DIR
     
     dotfiles.each do |f| 
 
-      next if ['.DS_Store'].include?(File.basename(f))
+      if linked?(f)
+        puts "[SKIP] '#{File.basename(f)}' already symlinked."
+        next
+      end
 
       # Ask for user input.
       ask     = lambda do
         puts
-        puts "→Symlink '#{File.basename(f)}'' to '#{HOME_DIR}/#{File.basename(f)}' and create backup if needed?"
+        puts "[QUESTION]\nSymlink '#{File.basename(f)}' to '#{HOME_DIR}/#{File.basename(f)}' and create backup if needed?"
         puts "[#{commands.join(', ')}]"
         b = STDIN.gets.chomp
         b
@@ -65,7 +68,7 @@ class  DotfileCabinet
         rescue SystemExit, Interrupt
           exit
         rescue Exception => e
-          puts "[ ERROR ] " + e.message
+          puts "[ERROR]\n " + e.message
           answer = true
         end
       end    
@@ -79,18 +82,21 @@ class  DotfileCabinet
   end
 
   def init
-    puts "❋ Creating '#{DOTFILE_DIR}', if necessary..."
+    puts "[TASK]\nCreating '#{DOTFILE_DIR}', if necessary..."
     FileUtils.mkdir DOTFILE_DIR           unless File.exists? DOTFILE_DIR
   end
 
   def list
-    puts "❋ Tracking the following (#{dotfiles.length}) dotfiles:\n"
-    puts dotfiles.each_with_index.map{ |f, index| "(#{index+1})  " + File.basename(f) }
+    puts "[TASK]\nShowing the following (#{dotfiles.length}) dotfiles, some may not be symlinked:\n"
+    dotfiles.each_with_index.map do |f, index| 
+      linked_verbiage = linked?(f) ? "☑ Symlinked:\t\t" : "☐ Not Symlinked:\t"
+      puts linked_verbiage + File.basename(f)
+    end
   end
   alias_method :ls, :list
 
   def purge
-    puts "❋ Deleting dotfile backups:\n"
+    puts "[TASK]\nDeleting dotfile backups:\n"
     `rm -i dotfile-backup*.zip`
   end
 
@@ -116,15 +122,22 @@ class  DotfileCabinet
   protected
 
   def dotfiles
-    @dotfiles ||= Dir[ "#{DOTFILE_DIR}/.*" ].reject do |f|
-      ['.', '..'].include? File.basename(f)
+    @dotfiles ||= Dir["#{DOTFILE_DIR}/.*"].reject do |f|
+      ['.', '..', '.DS_Store'].include? File.basename(f)
     end
+
+    @dotfiles.sort!{ |x,y| (linked?(y) ? 1 : -1) <=> (linked?(x) ? 1 : -1)  }
 
     @dotfiles
   end
 
   def commands
     ['y', 'n', 'a']
+  end
+
+  def linked?(file)
+    home_file = File.join(HOME_DIR, File.basename(file))
+    File.symlink?(home_file)  and File.readlink(home_file) == file 
   end
 
   def perform_link_action(action, file)
@@ -137,7 +150,7 @@ class  DotfileCabinet
       FileUtils.mv( orig_dotfile, DOTFILE_BACKUP_DIR ) if File.exists?(orig_dotfile)
       FileUtils.symlink( file, HOME_DIR )
       
-      puts "\n✓ Symlinked #{File.basename(file)} to #{HOME_DIR}."
+      puts "\n✓ Symlinked #{File.basename(file)} to #{HOME_DIR}.\n"
     when 'n'
       # Do nothing.
     when 'a'
@@ -166,11 +179,9 @@ if ARGV[0]
     cb = DotfileCabinet.new
     cb.integrity_check
     cb.send( ARGV[0] )
-    puts "\n------------------------------------"
-    puts "✓ Completed task: #{ARGV[0]}"
+    puts "\n[SUCCESS]\nCompleted command: #{ARGV[0]}"
   rescue Exception => e
     cb.zip_up_backups
-    puts "\n------------------------------------"
-    puts "⚠ Error: #{e.message}"
+    puts "\n[ERROR]\n#{e.message}"
   end
 end

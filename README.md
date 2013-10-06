@@ -19,6 +19,8 @@ $ chmod +x df-cab
 $ ./df-cab init
 ```
 
+You can also call `./df-cab` to see the complete list of commands.
+
 How it works
 ------------
 
@@ -34,14 +36,19 @@ Once you call `init`, a directory is created called `dotfiles`. This is where yo
       └── .gitignore_global
 ```
 
-Once your dotfiles are in the `dotfiles` directory, you should call `./df-cab link`, which symnlinks all of your dotfiles into your home directory, responsibly backing up any files that could be overwritten.
+Once your dotfiles are in the `dotfiles` directory, you should call `./df-cab link`, which symnlinks all of your dotfiles into your home directory. A zip folder is created which backs up any files that could be overwritten.
 
 The beauty lies in the fact that your dotfiles are symlinked to a Dropbox folder -- so any machine that you've called `./df-cab link` will always have your latest dotfiles. It's magic.
 
 I'm Scared
 ----------
 
-Ok, that's completely reasonable. These are your dotfile we're talking about.
+Ok--that's completely reasonable. These are your dotfile we're talking about.
+
+You can test and observe exactly what dotfile-cabinet is doing by creating a fake home directory somewhere on your machine, and call `./df-cab link <path/to/fake-home-dir>`. Do an `ls -la` of `path/to/fake-home-dir` to see how the symlinks have been setup. 
+
+CLI Options
+-----------
 
 
 Update
