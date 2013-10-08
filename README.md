@@ -12,11 +12,20 @@ Quick Start
 Assuming you have Dropbox installed:
 
 ```bash
-$ cd Dropbox/Apps                                                                     # Go into Dropbox folder.
-$ mkdir dotfile-cabinet && cd dotfile-cabinet                                         # Make a place to live inside Dropbox.
-$ curl -o df-cab https://raw.github.com/briangonzalez/dotfile-cabinet/master/df-cab   # Dowload df-cab file.
-$ chmod +x df-cab                                                                     # Make it executable.
-$ ./df-cab init                                                                       # Initialize df-cab's folder structure.
+# Change into Dropbox folder.
+cd Dropbox/Apps          
+
+# Make a place to live inside Dropbox.                           
+mkdir dotfile-cabinet && cd dotfile-cabinet   
+
+# Dowload df-cab file      
+curl -o df-cab https://raw.github.com/briangonzalez/dotfile-cabinet/master/df-cab
+
+# Make it executable.
+chmod +x df-cab
+
+# Initialize df-cab's folder structure.                                   
+./df-cab init                                       
 ```
 
 Call `df-cab` to see a complete list of commands.
@@ -90,8 +99,11 @@ Update
 You can check if you have the latest code by running the "up_to_date" command. If you don't, simply re-download it: 
 
 ```bash
-$ cd Dropbox/Apps/dotfile-cabinet
-$ curl -o df-cab https://raw.github.com/briangonzalez.org/df-cab 
+# Change into Dropbox folder.
+cd Dropbox/Apps          
+
+# Dowload df-cab file      
+curl -o df-cab https://raw.github.com/briangonzalez/dotfile-cabinet/master/df-cab 
 ```
 
 Credits
