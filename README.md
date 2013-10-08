@@ -87,7 +87,7 @@ You can use a different home directory path, which defaults to `~`, by supplying
 
 Update
 ------
-Simply re-curl it:
+You can check if you have the latest code by running the "up_to_date" command. If you don't, simply re-download it: 
 
 ```bash
 $ cd Dropbox/Apps/dotfile-cabinet
