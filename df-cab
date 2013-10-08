@@ -19,6 +19,7 @@ BANNER_COMMANDS = <<-eos
     list                             List dotfiles currently being tracked
     init                             Create the required directories
     purge                            Delete old backups 
+    up_to_date                       Is your version of the script up-to-date?
     about                            More information
     
 eos
@@ -34,6 +35,7 @@ CURRENT_DIR           = File.expand_path('..', __FILE__)
 DOTFILE_DIR           = File.join( CURRENT_DIR, 'dotfiles' )
 DOTFILE_BACKUP_DIR    = File.join( CURRENT_DIR, 'dotfiles-backup' )
 HOME_DIR              = ARGV[1] ? File.expand_path( ARGV[1] ) : File.expand_path( '~' )
+EXEC_URL              = "https://raw.github.com/briangonzalez/dotfile-cabinet/master/df-cab"
 NOW                   = "#{[Time.now.month, Time.now.day, Time.now.year ].join('-')}-at-#{[Time.now.hour,Time.now.min,Time.now.sec].join(".")}"
 
 class  DotfileCabinet
@@ -117,14 +119,30 @@ class  DotfileCabinet
     end
   end
 
-  def zip_up_backups
-    `zip dotfile-backup_#{NOW}.zip '#{DOTFILE_BACKUP_DIR}'`
-    FileUtils.rm_rf DOTFILE_BACKUP_DIR
+  def up_to_date
+    puts "[TASK: #{__callee__}]\nChecking if you're executable is up-to-date:\n"
+
+    file = "df-cab-latest"
+    %x[curl -o #{file} #{EXEC_URL}]
+    puts
+
+    if FileUtils.compare_file('df-cab', file)
+      puts "* df-cab is up-to-date!"
+    else
+      puts "* df-cab is NOT up-to-date!"
+      puts "* Please run:"
+      puts "  curl -o df-cab #{EXEC_URL}"
+    end
   end
 
   def about
     puts BANNER
     puts "    More info on the web at: github.com/briangonzalez/dotfile-cabinet"
+  end
+
+  def zip_up_backups
+    `zip dotfile-backup_#{NOW}.zip '#{DOTFILE_BACKUP_DIR}'`
+    FileUtils.rm_rf DOTFILE_BACKUP_DIR
   end
 
   protected
