@@ -96,5 +96,5 @@ $ curl -o df-cab https://raw.github.com/briangonzalez.org/df-cab
 
 Credits
 -------
-**dotfile-cabinet** was built by [Brian Gonzalez](http://briangonzalez.org). Inspiration was derived from 
+**dotfile-cabinet** was built by [Brian Gonzalez](http://briangonzalez.org). Inspiration was derived from (mackup)[https://github.com/lra/mackup].
 

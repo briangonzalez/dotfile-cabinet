@@ -35,12 +35,24 @@ CURRENT_DIR           = File.expand_path('..', __FILE__)
 DOTFILE_DIR           = File.join( CURRENT_DIR, 'dotfiles' )
 DOTFILE_BACKUP_DIR    = File.join( CURRENT_DIR, 'dotfiles-backup' )
 HOME_DIR              = ARGV[1] ? File.expand_path( ARGV[1] ) : File.expand_path( '~' )
+NOW                   = "#{[Time.now.month, Time.now.day, Time.now.year ].join('-')}-at-#{[Time.now.hour,Time.now.min,Time.now.sec].join(".")}"
 
 class  DotfileCabinet
 
   def link
-    puts "[TASK]\nSymlinking dotfiles to #{File.expand_path(HOME_DIR)}:\n\n"
+    puts "[TASK: #{__callee__}]\nSymlinking dotfiles to #{File.expand_path(HOME_DIR)}:\n\n"
     
+    if dotfiles.empty?
+      puts "* No files to link."
+      puts "* '#{DOTFILE_DIR}' is empty."
+      return
+    end
+
+    if all_linked?
+      puts "* Nothing to link -- all dotfiles already symlinked."
+      return
+    end
+
     # Create backup dir.
     FileUtils.mkdir DOTFILE_BACKUP_DIR
     
@@ -79,17 +91,17 @@ class  DotfileCabinet
   end
 
   def revert
-    puts "[TASK]\nNot yet implemented."
+    puts "[TASK: #{__callee__}]\nNot yet implemented."
     puts ""
   end
 
   def init
-    puts "[TASK]\nCreating '#{DOTFILE_DIR}', if necessary..."
+    puts "[TASK: #{__callee__}]\nCreating '#{DOTFILE_DIR}', if necessary..."
     FileUtils.mkdir DOTFILE_DIR           unless File.exists? DOTFILE_DIR
   end
 
   def list
-    puts "[TASK]\nShowing the following (#{dotfiles.length}) dotfiles, some may not be symlinked:\n"
+    puts "[TASK: #{__callee__}]\nShowing the following (#{dotfiles.length}) dotfiles, some may not be symlinked:\n"
     dotfiles.each_with_index.map do |f, index| 
       linked_verbiage = linked?(f) ? "☑ Symlinked:\t\t" : "☐ Not Symlinked:\t"
       puts linked_verbiage + File.basename(f)
@@ -98,7 +110,7 @@ class  DotfileCabinet
   alias_method :ls, :list
 
   def purge
-    puts "[TASK]\nDeleting dotfile backups:\n"
+    puts "[TASK: #{__callee__}]\nDeleting dotfile backups:\n"
     `rm -i dotfile-backup*.zip`
   end
 
@@ -112,7 +124,7 @@ class  DotfileCabinet
   end
 
   def zip_up_backups
-    `zip dotfile-backup-#{Time.now.to_s}.zip '#{DOTFILE_BACKUP_DIR}'`
+    `zip dotfile-backup_#{NOW}.zip '#{DOTFILE_BACKUP_DIR}'`
     FileUtils.rm_rf DOTFILE_BACKUP_DIR
   end
 
@@ -131,6 +143,11 @@ class  DotfileCabinet
     @dotfiles.sort!{ |x,y| (linked?(y) ? 1 : -1) <=> (linked?(x) ? 1 : -1)  }
 
     @dotfiles
+  end
+
+  def all_linked?
+    puts dotfiles.reject{ |f| linked?(f) }
+    dotfiles.reject{ |f| linked?(f) }.empty?
   end
 
   def commands
@@ -181,7 +198,7 @@ if ARGV[0]
     cb = DotfileCabinet.new
     cb.integrity_check
     cb.send( ARGV[0] )
-    puts "\n[SUCCESS]\nCompleted command: #{ARGV[0]}"
+    puts "\n[SUCCESS]\nCompleted: #{ARGV[0]}"
   rescue Exception => e
     cb.zip_up_backups
     puts "\n[ERROR]\n#{e.message}"
