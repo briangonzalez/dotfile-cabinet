@@ -79,6 +79,7 @@ link        # Symlink dotfiles and create backups
 list        # List dotfiles currently being tracked
 init        # Create the required dotfile directory
 purge       # Delete old backups
+up_to_date  # Is your version of the script up-to-date?
 about       # More information
 ```
 

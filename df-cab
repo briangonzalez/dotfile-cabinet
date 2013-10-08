@@ -50,7 +50,7 @@ class  DotfileCabinet
     end
 
     if all_linked?
-      puts "* Nothing to link -- all dotfiles already symlinked."
+      puts "* Nothing to link -- all dotfiles are already symlinked."
       return
     end
 
