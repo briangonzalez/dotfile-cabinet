@@ -76,7 +76,6 @@ CLI Options
 
 ```bash
 link        # Symlink dotfiles and create backups
-revert      # Put dotfile backups back in their place
 list        # List dotfiles currently being tracked
 init        # Create the required dotfile directory
 purge       # Delete old backups

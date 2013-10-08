@@ -16,7 +16,6 @@ BANNER_COMMANDS = <<-eos
     Commands                         Description
     -----------------------------------------------------------------------------
     link                             Symlink dotfiles and create backups
-    revert                           Put dotfile backups back in their place
     list                             List dotfiles currently being tracked
     init                             Create the required directories
     purge                            Delete old backups 
@@ -88,11 +87,6 @@ class  DotfileCabinet
 
     zip_up_backups
 
-  end
-
-  def revert
-    puts "[TASK: #{__callee__}]\nNot yet implemented."
-    puts ""
   end
 
   def init
