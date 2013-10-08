@@ -79,6 +79,8 @@ class  DotfileCabinet
   end
 
   def revert
+    puts "[TASK]\nNot yet implemented."
+    puts ""
   end
 
   def init
@@ -110,7 +112,7 @@ class  DotfileCabinet
   end
 
   def zip_up_backups
-    `zip dotfile-backup-#{Time.now.to_i.to_s}.zip '#{DOTFILE_BACKUP_DIR}'`
+    `zip dotfile-backup-#{Time.now.to_s}.zip '#{DOTFILE_BACKUP_DIR}'`
     FileUtils.rm_rf DOTFILE_BACKUP_DIR
   end
 
