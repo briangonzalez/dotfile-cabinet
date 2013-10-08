@@ -28,7 +28,7 @@ chmod +x df-cab
 ./df-cab init                                       
 ```
 
-Call `df-cab` to see a complete list of commands.
+Call `df-cab` to see a complete list of commands. From this point on, the `./` in front of `df-cab` is implied for readability. 
 
 How it works
 ------------
@@ -45,22 +45,24 @@ Once you call `init`, a directory is created called `dotfiles`. This is where yo
       └── .gitignore_global
 ```
 
-Once your dotfiles are in the `dotfiles` directory, you should call `df-cab link`, which symnlinks all of your dotfiles into your home directory. A zip folder is created with backups of any files that could be overwritten.
+Once your dotfiles are in the `dotfiles` directory, you should call `link`, which symnlinks all of your dotfiles into your home directory. A zip folder is created with backups of any files that could be overwritten.
 
-The beauty lies in the fact that *your dotfiles are symlinked to a Dropbox folder* -- so any machine that you've called `df-cab link` will always have your latest dotfiles. It's black magic.
+The beauty lies in the fact that *your dotfiles are symlinked to a Dropbox folder* -- so any machine that you've called `link` on will always have your latest dotfiles. It's like magic.
 
 I'm Scared
 ----------
 
 Ok, that's completely reasonable. These are your dotfiles we're talking about. You wouldn't want anything to go amiss.
 
-You can test and observe exactly what `df-cab link` is doing by creating a fake home directory somewhere on your machine, and call `df-cab link < path/to/fake-home-dir >`. Do an `ls -la` on `path/to/fake-home-dir` to see just exactly how the symlinks have been setup. 
+You can test and observe exactly what the `link` command is doing by creating a fake home directory somewhere on your machine, and call `df-cab link < path/to/fake-home-dir >`. 
+
+Do an `ls -la` on `path/to/fake-home-dir` to see just exactly how the symlinks have been setup. 
 
 
 Which files are currently linked?
 ---------------------------------
 
-You can run `df-cab list` to see which files are symlinked. Here's an example output, which shows that you have 6 dotfiles in your `dotfiles` folder, none of which have been symlinked:
+You can run the `list` command to see which files are symlinked. Here's an example output, which shows that you have 6 dotfiles in your `dotfiles` folder, none of which have been symlinked:
 
 ```bash
 ❯ df-cab list
