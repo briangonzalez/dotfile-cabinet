@@ -133,6 +133,8 @@ class  DotfileCabinet
       puts "* Please run:"
       puts "  curl -o df-cab #{EXEC_URL}"
     end
+
+    FileUtils.rm_rf(file)
   end
 
   def about
