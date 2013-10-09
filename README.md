@@ -98,7 +98,7 @@ You can use a different home directory path, which defaults to `~`, by supplying
 
 Update
 ------
-You can check if you have the latest code by running the "up_to_date" command. If you don't, simply re-download it: 
+You can check if you have the latest code by running the `df-cab up_to_date` command. If you don't, simply re-download it: 
 
 ```bash
 # Change into Dropbox folder.
