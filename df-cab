@@ -41,7 +41,7 @@ NOW                   = "#{[Time.now.month, Time.now.day, Time.now.year ].join('
 class  DotfileCabinet
 
   def link
-    puts "[TASK: #{__callee__}]\nSymlinking dotfiles to #{File.expand_path(HOME_DIR)}:\n\n"
+    puts "[TASK: #{ARGV[0]}]\nSymlinking dotfiles to #{File.expand_path(HOME_DIR)}:\n\n"
     
     if dotfiles.empty?
       puts "* No files to link."
@@ -92,12 +92,12 @@ class  DotfileCabinet
   end
 
   def init
-    puts "[TASK: #{__callee__}]\nCreating '#{DOTFILE_DIR}', if necessary..."
+    puts "[TASK: #{ARGV[0]}]\nCreating '#{DOTFILE_DIR}', if necessary..."
     FileUtils.mkdir DOTFILE_DIR           unless File.exists? DOTFILE_DIR
   end
 
   def list
-    puts "[TASK: #{__callee__}]\nShowing the following (#{dotfiles.length}) dotfiles, some may not be symlinked:\n"
+    puts "[TASK: #{ARGV[0]}]\nShowing the following (#{dotfiles.length}) dotfiles, some may not be symlinked:\n"
     dotfiles.each_with_index.map do |f, index| 
       linked_verbiage = linked?(f) ? "☑ Symlinked:\t\t" : "☐ Not Symlinked:\t"
       puts linked_verbiage + File.basename(f)
@@ -106,7 +106,7 @@ class  DotfileCabinet
   alias_method :ls, :list
 
   def purge
-    puts "[TASK: #{__callee__}]\nDeleting dotfile backups:\n"
+    puts "[TASK: #{ARGV[0]}]\nDeleting dotfile backups:\n"
     `rm -i dotfile-backup*.zip`
   end
 
@@ -120,7 +120,7 @@ class  DotfileCabinet
   end
 
   def up_to_date
-    puts "[TASK: #{__callee__}]\nChecking if you're executable is up-to-date:\n"
+    puts "[TASK: #{ARGV[0]}]\nChecking if you're executable is up-to-date:\n"
 
     file = "df-cab-latest"
     %x[curl -o #{file} #{EXEC_URL}]
