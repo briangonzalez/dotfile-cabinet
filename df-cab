@@ -160,7 +160,6 @@ class  DotfileCabinet
   end
 
   def all_linked?
-    puts dotfiles.reject{ |f| linked?(f) }
     dotfiles.reject{ |f| linked?(f) }.empty?
   end
 
