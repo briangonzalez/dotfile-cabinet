@@ -1,6 +1,6 @@
 dotfile-cabinet
 ===============
-Responsibly manage your dotfiles.
+Responsibly manage your dotfiles with Dropbox.
 
 The Gist
 --------
