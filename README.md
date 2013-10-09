@@ -112,3 +112,9 @@ Credits
 -------
 **dotfile-cabinet** was built by [Brian Gonzalez](http://briangonzalez.org). Inspiration was derived from (mackup)[https://github.com/lra/mackup].
 
+Resources
+---------
+
+- [Installing Dropbox on CentOS](https://gist.github.com/briangonzalez/6903025)
+- [Mathias’s dotfiles](https://github.com/mathiasbynens/dotfiles)
+
