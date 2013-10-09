@@ -110,7 +110,7 @@ curl -o df-cab https://raw.github.com/briangonzalez/dotfile-cabinet/master/df-ca
 
 Credits
 -------
-**dotfile-cabinet** was built by [Brian Gonzalez](http://briangonzalez.org). Inspiration was derived from (mackup)[https://github.com/lra/mackup].
+**dotfile-cabinet** was built by [Brian Gonzalez](http://briangonzalez.org). Inspiration was derived from [mackup](https://github.com/lra/mackup).
 
 Resources
 ---------
